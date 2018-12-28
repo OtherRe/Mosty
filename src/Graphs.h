@@ -3,11 +3,7 @@
 
 // #include <cstddef>
 #include <algorithm>
-#include <cassert>
-#include <initializer_list>
-#include <iostream>
 #include <limits>
-#include <queue>
 #include <set>
 #include <stack>
 #include <stdexcept>
@@ -22,7 +18,7 @@ class Graph
     {
         int id;
         size_t degree = 0;
-        std::set<int> neighbors;
+        std::vector<int> neighbors;
     };
 
     struct APInfo
@@ -79,8 +75,8 @@ class Graph
             first == second)
             throw std::out_of_range("Wrong vetex index");
 
-        vertecies[first].neighbors.insert(second);
-        vertecies[second].neighbors.insert(first);
+        vertecies[first].neighbors.push_back(second);
+        vertecies[second].neighbors.push_back(first);
     }
 
     Vertex &operator[](size_t vertexId) { return vertecies.at(vertexId); }
@@ -90,7 +86,7 @@ class Graph
         return vertecies.at(vertexId).neighbors.size();
     }
 
-    std::set<int> getNeigbors(size_t vertexId)
+    std::vector<int> getNeigbors(size_t vertexId)
     {
         return vertecies.at(vertexId).neighbors;
     }
@@ -143,7 +139,7 @@ class Graph
         return result;
     }
 
-    std::set<Edge> getWideBidges()
+    std::set<Edge> bgetWideBridges()
     {
         std::set<Edge> result;
 
@@ -178,10 +174,10 @@ class Graph
         return result;
     }
 
-    std::set<Edge> bgetWideBridges()
+    std::set<Edge> getWideBidges()
     {
         std::set<Edge> result;
-        for(auto& edge : getEdges())
+        for(const auto& edge : getEdges())
         {
             auto visited = getDFSOrderWithRemovedEdge(0, edge).size();
             if(visited != size() - 2)
@@ -206,10 +202,8 @@ class Graph
         auto it = DFS(*this, &vertecies[vertexId]).remove_begin(e.first, e.second);
         auto end = DFS(*this, &vertecies[vertexId]).remove_end();
         for (; it != end; ++it)
-        {
-            auto v = *it;
-            result.push_back(v->id);
-        }
+            result.push_back((*it)->id);
+        
         return result;
     }
 

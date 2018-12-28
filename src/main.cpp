@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int main(int argc, char **argv)
+int main()
 {
   auto graph = Graph(6);
 

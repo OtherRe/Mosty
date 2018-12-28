@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(GivenGraphWithTwoVerteciesAndNoEdges_WhenAddingEdge_DegreeI
     BOOST_CHECK_EQUAL(graph.getDegree(1), 1);
 }
 
-BOOST_AUTO_TEST_CASE(GivenGraph_WhenAddingEdges_NeighboursAreCorrect)
+BOOST_AUTO_TEST_CASE(GivenGraph_WhenAddingEdges_NeighborsAreCorrect)
 {
     auto graph = Graph(4);
 
@@ -62,10 +62,10 @@ BOOST_AUTO_TEST_CASE(GivenGraph_WhenAddingEdges_NeighboursAreCorrect)
     graph.addEdge(0, 3);
     graph.addEdge(1, 3);
 
-    thenSetContains(graph.getNeigbors(0), {1, 2, 3});
-    thenSetContains(graph.getNeigbors(1), {0, 3});
-    thenSetContains(graph.getNeigbors(2), {0});
-    thenSetContains(graph.getNeigbors(3), {0, 1});
+    thenVectorContains(graph.getNeigbors(0), {1, 2, 3});
+    thenVectorContains(graph.getNeigbors(1), {0, 3});
+    thenVectorContains(graph.getNeigbors(2), {0});
+    thenVectorContains(graph.getNeigbors(3), {0, 1});
 }
 BOOST_AUTO_TEST_CASE(GivenGraph_WhenEdgesAreAdded_ReturnsCorrectEdgeSet)
 {
@@ -99,9 +99,9 @@ BOOST_AUTO_TEST_CASE(GivenComplexGraph_WhenGettingDFSOrder_ReturnsCorrectOrder)
     graph.addEdge(0, 4);
     graph.addEdge(1, 4);
     graph.addEdge(2, 4);
-    graph.addEdge(4, 5);
     graph.addEdge(3, 4);
     graph.addEdge(3, 5);
+    graph.addEdge(4, 5);
 
     thenVectorContainsOrdered(graph.getDFSOrder(0), {0, 4, 5, 3, 2, 1});
 }
@@ -118,19 +118,19 @@ BOOST_AUTO_TEST_CASE(GivenConnectedGraph_WhenAskingIfIsConnected_ReturnsTrue)
     auto graph = Graph(4);
 
     graph.addEdge(0, 1);
+    graph.addEdge(1, 2);
     graph.addEdge(2, 3);
 
-    BOOST_CHECK(!graph.isConnected());
+    BOOST_CHECK(graph.isConnected());
 }
 BOOST_AUTO_TEST_CASE(GivenDisconnectedGraph_WhenAskingIfConnected_ReturnsFalse)
 {
     auto graph = Graph(4);
 
     graph.addEdge(0, 1);
-    graph.addEdge(1, 2);
     graph.addEdge(2, 3);
 
-    BOOST_CHECK(graph.isConnected());
+    BOOST_CHECK(!graph.isConnected());
 }
 BOOST_AUTO_TEST_CASE(GivenGraphRectangle_WhenAskingArticulatingPoints_ReturnsNone)
 {
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(GivenRectangleWithTwoDiagonalsAndRemovedSide_WhenAskingArti
 
     thenSetContains(graph.articulationPoints(), {});
 }
-BOOST_AUTO_TEST_CASE(GivenRectangle_WhenAskingForDfsWithRemovedEdge_ReturnsCorrectResult)
+BOOST_AUTO_TEST_CASE(GivenRectangle_WhenAskingForDFSWithRemovedEdge_ReturnsCorrectResult)
 {
     auto graph = Graph(4);
 
