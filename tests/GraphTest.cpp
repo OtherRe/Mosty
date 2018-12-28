@@ -132,44 +132,7 @@ BOOST_AUTO_TEST_CASE(GivenDisconnectedGraph_WhenAskingIfConnected_ReturnsFalse)
 
     BOOST_CHECK(!graph.isConnected());
 }
-BOOST_AUTO_TEST_CASE(GivenGraphRectangle_WhenAskingArticulatingPoints_ReturnsNone)
-{
-    auto graph = Graph(4);
 
-    graph.addEdge(0, 1);
-    graph.addEdge(1, 2);
-    graph.addEdge(2, 3);
-    graph.addEdge(3, 0);
-
-
-    BOOST_CHECK_EQUAL(graph.articulationPoints().size(), 0);
-}
-BOOST_AUTO_TEST_CASE(GivenGraphWithTwoArticulationPoints_WhenAskingForThem_ReturnsCorrectResult)
-{
-    auto graph = Graph(6);
-
-    graph.addEdge(0, 1);
-    graph.addEdge(0, 5);
-    graph.addEdge(1, 2);
-    graph.addEdge(1, 3);
-    graph.addEdge(2, 3);
-    graph.addEdge(4, 3);
-    graph.addEdge(4, 2);
-
-    thenSetContains(graph.articulationPoints(), { 0, 1 });
-}
-BOOST_AUTO_TEST_CASE(GivenRectangleWithTwoDiagonalsAndRemovedSide_WhenAskingArticulationPoints_ReturnsCorrectResult)
-{
-    auto graph = Graph(5);
-
-    graph.addEdge(0, 1);
-    graph.addEdge(0, 2);
-    graph.addEdge(1, 3);
-    graph.addEdge(1, 2);
-    graph.addEdge(2, 3);
-
-    thenSetContains(graph.articulationPoints(), {});
-}
 BOOST_AUTO_TEST_CASE(GivenRectangle_WhenAskingForDFSWithRemovedEdge_ReturnsCorrectResult)
 {
     auto graph = Graph(4);
