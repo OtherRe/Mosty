@@ -8,6 +8,7 @@
 #include <stack>
 #include <stdexcept>
 #include <utility>
+#include <string>
 #include <vector>
 
 class Graph
@@ -42,7 +43,7 @@ class Graph
     {
         if (first >= vertecies.size() || second >= vertecies.size() ||
             first == second)
-            throw std::out_of_range("Wrong vetex index");
+            throw std::out_of_range("Wrong vetex index " + std::to_string(first) + " " + std::to_string(second));
 
         vertecies[first].neighbors.push_back(second);
         vertecies[second].neighbors.push_back(first);
@@ -55,29 +56,26 @@ class Graph
         return vertecies.at(vertexId).neighbors.size();
     }
 
-    std::vector<int> getNeigbors(size_t vertexId)
+    const std::vector<int>& getNeigbors(size_t vertexId) const
     {
         return vertecies.at(vertexId).neighbors;
     }
 
-    bool isConnected()
+    bool isConnected() 
     {
         if (vertecies.size() == 0)
             return true;
 
         size_t counter = 0;
-        for (const auto &_ : DFS(*this, &vertecies[0], -1, -1))
-        {
-            (void)_;
-            ++counter;
-        }
+        auto dfs = DFS(*this, &vertecies[0]);
+        for_each(dfs.begin(), dfs.end(), [&counter](auto){ counter++;});
 
         return counter == vertecies.size();
     }
 
     size_t size() const { return vertecies.size(); }
 
-    std::set<Edge> getEdges()
+    std::set<Edge> getEdges() const
     {
         std::set<Edge> result;
         for (auto &v : vertecies)
@@ -93,7 +91,7 @@ class Graph
         std::set<Edge> result;
         for (const auto &edge : getEdges())
         {
-            auto visited = getDFSOrderWithRemovedEdge(0, edge).size();
+            auto visited = getDFSCountWithRemovedEdge(0, edge);
             if (visited != size() - 2)
                 result.insert(edge);
         }
@@ -103,13 +101,13 @@ class Graph
     std::vector<int> getDFSOrder(int vertexId)
     {
         std::vector<int> result;
-        for (auto v : DFS(*this, &vertecies[vertexId], -1, -1))
+        for (auto v : DFS(*this, &vertecies[vertexId]))
         {
             result.push_back(v->id);
         }
         return result;
     }
-
+    
     std::vector<int> getDFSOrderWithRemovedEdge(int vertexId, const Edge &e)
     {
         std::vector<int> result;
@@ -118,6 +116,16 @@ class Graph
 
         return result;
     }
+    
+    size_t getDFSCountWithRemovedEdge(int vertexId, const Edge &e)
+    {
+        size_t result = 0;
+        auto it = DFS(*this, &vertecies[vertexId], e.first, e.second);
+        for_each(it.begin(), it. end(), [&result](auto){ result++;});
+
+        return result;
+    }
+
 
     class DFS
     {
@@ -126,7 +134,7 @@ class Graph
         int u;
         int v;
       public:
-        DFS(Graph &graph, Vertex *first, int u, int v) : graph(graph), first(first), u(u), v(v) {}
+        DFS(Graph &graph, Vertex *first, int u = -1, int v = -1) : graph(graph), first(first), u(u), v(v) {}
         // member typedefs provided through inheriting from std::iterator
         class remove_iterator
             : public std::iterator<std::input_iterator_tag, // iterator_category
@@ -136,19 +144,20 @@ class Graph
                                    Vertex                   // reference
                                    >
         {
-          protected:
+          private:
             Graph &graph;
             std::stack<Vertex *> trace;
             std::vector<bool> visited;
             Vertex *current;
+            int u;
+            int v;
+
             Vertex *tracePop()
             {
                 auto v = trace.top();
                 trace.pop();
                 return v;
             }
-            int u;
-            int v;
 
             bool isRemoved(int id)
             {
@@ -209,9 +218,9 @@ class Graph
             }
             bool operator==(remove_iterator other) const
             {
-                bool result = &graph == &other.graph &&
+                bool result =  current == other.current && 
                               trace.size() == other.trace.size() &&
-                              current == other.current;
+                              &graph == &other.graph;
                 return result;
             }
             bool operator!=(remove_iterator other) const { return !(*this == other); }
